@@ -165,7 +165,7 @@ function magepd_settings_init()
 
    add_settings_section(
       'magepd_pluginPage_section',
-      __('Settings', 'wordpress'),
+      __('Configuración', 'wordpress'),
       'magepd_settings_section_callback',
       'magepd_pluginPage'
    );
@@ -173,7 +173,7 @@ function magepd_settings_init()
    $args = array('size' => '80');
    add_settings_field(
       'magepd_url',
-      __('Your Magento URL (https)', 'wordpress'),
+      __('URL del Magento (https)', 'wordpress'),
       'magepd_url_render',
       'magepd_pluginPage',
       'magepd_pluginPage_section',
@@ -181,7 +181,7 @@ function magepd_settings_init()
    );
    add_settings_field(
       'magepd_userid',
-      __('Your Magento blog Userid', 'wordpress'),
+      __('Usuario API', 'wordpress'),
       'magepd_userid_render',
       'magepd_pluginPage',
       'magepd_pluginPage_section',
@@ -189,7 +189,7 @@ function magepd_settings_init()
    );
    add_settings_field(
       'magepd_password',
-      __('Your Magento blog Password', 'wordpress'),
+      __('Contraseña API', 'wordpress'),
       'magepd_password_render',
       'magepd_pluginPage',
       'magepd_pluginPage_section',
@@ -255,7 +255,7 @@ function magepd_password_render($args)
 function magepd_settings_section_callback()
 {
 
-   echo __('Settings required by this plugin', 'wordpress');
+   echo __('Rellena los campos para conectarte al Magento', 'wordpress');
 
 }
 
@@ -266,7 +266,7 @@ function magepd_options_page()
    ?>
     <form action='options.php' method='post'>
 
-        <h2>Product Display for Magento</h2>
+        <h2>Conector Magento</h2>
 
        <?php
        settings_fields('magepd_pluginPage');
