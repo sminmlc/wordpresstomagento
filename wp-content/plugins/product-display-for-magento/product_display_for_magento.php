@@ -153,7 +153,7 @@ function magepd_add_admin_menu()
 {
 
 
-   add_menu_page ( 'Product Display for Magento', 'Product Display for Magento', 'manage_options', 'mage_product_display_', 'magepd_options_page', 'dashicons-store' );
+   add_menu_page ( 'Conector Magento', 'Conector Magento', 'manage_options', 'mage_product_display_', 'magepd_options_page', 'dashicons-store' );
 
 }
 
