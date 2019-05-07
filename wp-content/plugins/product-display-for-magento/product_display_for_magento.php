@@ -118,8 +118,6 @@ function mage_product_display_shortcode($atts = [], $content = null, $tag = '')
    return $o;
 }
 
-
-
 function mage_product_display_price($price)
 {
    setlocale(LC_MONETARY, 'en_US');
@@ -143,24 +141,13 @@ function mage_product_display_shortcodes_init()
    add_shortcode('mage_product_display', 'mage_product_display_shortcode');
 }
 
-add_action('init', 'mage_product_display_shortcodes_init');
-
-add_action('admin_menu', 'magepd_add_admin_menu');
-add_action('admin_init', 'magepd_settings_init');
-
-
 function magepd_add_admin_menu()
 {
-
-
    add_menu_page ( 'Conector Magento', 'Conector Magento', 'manage_options', 'mage_product_display_', 'magepd_options_page', 'dashicons-store' );
-
 }
-
 
 function magepd_settings_init()
 {
-
    register_setting('magepd_pluginPage', 'magepd_settings');
 
    add_settings_section(
@@ -195,14 +182,10 @@ function magepd_settings_init()
       'magepd_pluginPage_section',
       $args
    );
-
-
 }
-
 
 function magepd_url_render($args)
 {
-
    $options = get_option('magepd_settings');
    ?>
     <input type='text' name='magepd_settings[magepd_url]' value='<?php echo $options['magepd_url']; ?>'
@@ -219,7 +202,6 @@ function magepd_url_render($args)
 
 function magepd_userid_render($args)
 {
-
    $options = get_option('magepd_settings');
    ?>
     <input type='text' name='magepd_settings[magepd_userid]' value='<?php echo $options['magepd_userid']; ?>'
@@ -236,7 +218,6 @@ function magepd_userid_render($args)
 
 function magepd_password_render($args)
 {
-
    $options = get_option('magepd_settings');
    ?>
     <input type='text' name='magepd_settings[magepd_password]' value='<?php echo $options['magepd_password']; ?>'
@@ -248,21 +229,15 @@ function magepd_password_render($args)
        }
        ?>>
    <?php
-
 }
-
 
 function magepd_settings_section_callback()
 {
-
    echo __('Rellena los campos para conectarte al Magento', 'wordpress');
-
 }
-
 
 function magepd_options_page()
 {
-
    ?>
     <form action='options.php' method='post'>
 
@@ -276,5 +251,15 @@ function magepd_options_page()
 
     </form>
    <?php
-
 }
+
+/* Call functions */
+add_action('init', 'mage_product_display_shortcodes_init');
+
+add_action('admin_menu', 'magepd_add_admin_menu');
+add_action('admin_init', 'magepd_settings_init');
+
+
+/* START TEST */
+
+/* END TEST */
