@@ -1,0 +1,15 @@
+/* 
+  Stylesheet for Product Display for Magento Plugin
+  https://www.thatsoftwareguy.com/wp_product_display_for_magento.html 
+*/
+#prod-left {
+  width: 200px;
+  float: left;
+}
+#prod-right {
+  margin-left: 200px;
+  /* Change this to whatever the width of your left column is*/
+}
+.prod-clear {
+  clear: both;
+}
