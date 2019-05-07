@@ -18,51 +18,9 @@ function mage_product_display_shortcode($atts = [], $content = null, $tag = '')
    $atts = array_change_key_case((array)$atts, CASE_LOWER);
    $sku = $atts['sku'];
 
-   $magepd_settings = get_option('magepd_settings');
-   $url = $magepd_settings['magepd_url'];
-   $userid = $magepd_settings['magepd_userid'];
-   $password = $magepd_settings['magepd_password'];
+   $headers = connectToMagento();
+   $response = getProduct($headers,$sku);
 
-
-   //API URL for authentication
-   $apiURL = $url . "/rest/V1/integration/admin/token";
-
-   //parameters passing with URL
-   $data = array("username" => $userid, "password" => $password);
-   $data_string = json_encode($data);
-
-   $response = wp_remote_post($apiURL, array(
-      'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
-      'body' => $data_string,
-   ));
-
-   if (is_wp_error($response)) {
-      $o = mage_product_display_get_error("Auth query failure: " . $response->get_error_message());
-      return $o;
-   }  else if (wp_remote_retrieve_response_code( $response ) != 200) {
-      $o = mage_product_display_get_error("Auth unexpected return: " . wp_remote_retrieve_response_message( $response )); 
-      return $o;
-   }
-
-   $token = json_decode(wp_remote_retrieve_body($response));
-   $headers = array("Authorization: Bearer " . $token);
-
-   //API URL to get product by SKU
-   $requestURL = $url . "/rest/V1/products/" . $sku;
-
-   $response = wp_remote_get($requestURL, array(
-      'headers' => $headers,
-      'body' => null,
-   ));
-   if (is_wp_error($response)) {
-      $o = mage_product_display_get_error("Product query failure: " . $response->get_error_message());
-      return $o;
-   }  else if (wp_remote_retrieve_response_code( $response ) != 200) {
-      $o = mage_product_display_get_error("Product query unexpected return: " . wp_remote_retrieve_response_message( $response )); 
-      return $o;
-   }
-
-   $response = json_decode(wp_remote_retrieve_body($response));
 
    // Initialize
    $data['name'] = ' ';
@@ -71,6 +29,8 @@ function mage_product_display_shortcode($atts = [], $content = null, $tag = '')
    $data['link'] = ' ';
    $data['image'] = ' ';
    $data['description'] = ' ';
+
+   $url = getUrl();
 
    // Fill from response
    $data['name'] = wp_kses_post($response->name);
@@ -116,6 +76,68 @@ function mage_product_display_shortcode($atts = [], $content = null, $tag = '')
 
    // return output
    return $o;
+}
+
+function getUrl(){
+    $magepd_settings = get_option('magepd_settings');
+    $url = $magepd_settings['magepd_url'];
+    return $url;
+}
+
+//Create magento conexion
+function connectToMagento(){
+
+    $magepd_settings = get_option('magepd_settings');
+
+    $userid = $magepd_settings['magepd_userid'];
+    $password = $magepd_settings['magepd_password'];
+    $url = getUrl();
+
+    //API URL for authentication
+    $apiURL = $url . "/rest/V1/integration/admin/token";
+
+    //parameters passing with URL
+    $data = array("username" => $userid, "password" => $password);
+    $data_string = json_encode($data);
+
+    $response = wp_remote_post($apiURL, array(
+        'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
+        'body' => $data_string,
+    ));
+
+    if (is_wp_error($response)) {
+        $o = mage_product_display_get_error("Auth query failure: " . $response->get_error_message());
+        return $o;
+    }  else if (wp_remote_retrieve_response_code( $response ) != 200) {
+        $o = mage_product_display_get_error("Auth unexpected return: " . wp_remote_retrieve_response_message( $response ));
+        return $o;
+    }
+
+    $token = json_decode(wp_remote_retrieve_body($response));
+    $headers = array("Authorization: Bearer " . $token);
+
+
+    return $headers;
+}
+
+function getProduct($headers,$sku){
+    //API URL to get product by SKU
+    $requestURL = getUrl() . "/rest/V1/products/" . $sku;
+
+    $response = wp_remote_get($requestURL, array(
+        'headers' => $headers,
+        'body' => null,
+    ));
+    if (is_wp_error($response)) {
+        $o = mage_product_display_get_error("Product query failure: " . $response->get_error_message());
+        return $o;
+    }  else if (wp_remote_retrieve_response_code( $response ) != 200) {
+        $o = mage_product_display_get_error("Product query unexpected return: " . wp_remote_retrieve_response_message( $response ));
+        return $o;
+    }
+
+    $response = json_decode(wp_remote_retrieve_body($response));
+    return $response;
 }
 
 function mage_product_display_price($price)
@@ -261,5 +283,27 @@ add_action('admin_init', 'magepd_settings_init');
 
 
 /* START TEST */
-
+add_action('add_meta_boxes', 'add_custom_products_magento');
+function add_custom_products_magento()
+{
+    $screens = ['post', 'wporg_cpt'];
+    foreach ($screens as $screen) {
+        add_meta_box(
+            'wporg_box_id',           // Unique ID
+            'Productos del magento',  // Box title
+            'wporg_custom_box_html',  // Content callback, must be of type callable
+            $screen                   // Post type
+        );
+    }
+}
+function wporg_custom_box_html($post)
+{
+    ?>
+    <label for="wporg_field">Selecciona los productos a mostrar...</label>
+    <select name="wporg_field" id="wporg_field" class="postbox">
+        <option value="">Selecciona...</option>
+        <!-- Llamamos función para coger todos los productos de magento -->
+    </select>
+    <?php
+}
 /* END TEST */
