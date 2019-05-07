@@ -142,13 +142,13 @@ function getProduct($headers,$sku){
 
 function mage_product_display_price($price)
 {
-   setlocale(LC_MONETARY, 'en_US');
-   return money_format('%.2n', $price);
+   setlocale(LC_MONETARY, 'es_ES');
+   //return money_format('%.2n', $price);
+   return $price;
 }
 
 function mage_product_display_get_error($msg)
 {
-
    $o = '<div class="mage_product_display-box">';
    $o .= $msg;
    $o .= '</div>';
@@ -219,7 +219,6 @@ function magepd_url_render($args)
        }
        ?>>
    <?php
-
 }
 
 function magepd_userid_render($args)
